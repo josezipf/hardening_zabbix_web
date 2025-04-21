@@ -1,0 +1,90 @@
+---
+# 1. Ativa o módulo 'headers' no Apache, necessário para configuração de headers HTTP de segurança.
+- name: Ativar mod_headers
+  ansible.builtin.command: a2enmod headers
+  args:
+    creates: /etc/apache2/mods-enabled/headers.load  # Evita execução se o módulo já estiver habilitado
+  notify: Restart Apache
+
+# 2. Copia template de configuração contendo headers HTTP de segurança para o diretório de configurações disponíveis do Apache.
+- name: Copiar arquivo de headers de segurança
+  ansible.builtin.template:
+    src: security-headers.conf.j2
+    dest: "{{ apache_conf_path }}/security-headers.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache
+
+# 3. Copia template de configuração contendo headers HTTP de segurança para o diretório de configurações disponíveis do Apache.
+- name: Copiar arquivo de segurança
+  ansible.builtin.template:
+    src: apache_security.conf.j2
+    dest: "{{ apache_conf_path }}/security.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache
+
+# 4. Cria link simbólico da configuração de headers no diretório de configurações ativas do Apache.
+- name: Ativar configuração de headers (link conf)
+  ansible.builtin.file:
+    src: "{{ apache_conf_path }}/security-headers.conf"
+    dest: "{{ apache_conf_enabled_path }}/security-headers.conf"
+    state: link
+  notify: Restart Apache
+
+# 5. Remove arquivos padrão de index do Apache para evitar exposição de páginas default e reduzir superfície de ataque.
+- name: Remover arquivos padrão do Apache
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /var/www/html/index.html
+    - /var/www/html/index.php
+
+# 6. Ajusta as permissões da pasta do Zabbix para o usuário e grupo www-data, assegurando que o Apache tenha acesso controlado aos arquivos.
+- name: Ajustar permissões da pasta Zabbix
+  ansible.builtin.file:
+    path: /usr/share/zabbix
+    owner: root
+    group: www-data
+    recurse: true  # Aplica recursivamente as permissões a todos os arquivos e diretórios
+
+# 7. Encontra todos os diretórios dentro de /usr/share/zabbix
+- name: Listar diretórios do Zabbix
+  ansible.builtin.find:
+    paths: /usr/share/zabbix
+    file_type: directory
+  register: zabbix_directories
+
+# 8. Define permissões 0755 para todos os diretórios encontrados
+- name: Definir permissões 0755 para diretórios do Zabbix
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: '0755'
+  loop: "{{ zabbix_directories.files }}"
+
+# 9. Encontra todos os arquivos dentro de /usr/share/zabbix
+- name: Listar arquivos do Zabbix
+  ansible.builtin.find:
+    paths: /usr/share/zabbix
+    file_type: file
+  register: zabbix_files
+
+# 10. Define permissões 0644 para todos os arquivos encontrados
+- name: Definir permissões 0644 para arquivos do Zabbix
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: '0644'
+  loop: "{{ zabbix_files.files }}"
+
+# 11. Copia template de configuração que realiza redirecionamento automático de HTTP para HTTPS, forçando comunicação segura.
+- name: Configurar redirecionamento HTTP para HTTPS
+  ansible.builtin.template:
+    src: redirect-http-to-https.conf.j2
+    dest: /etc/apache2/sites-available/000-default.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache

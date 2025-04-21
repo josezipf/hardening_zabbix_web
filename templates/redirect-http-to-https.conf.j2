@@ -1,0 +1,5 @@
+# Redireciona todo tráfego HTTP para HTTPS (forçando conexão segura)
+<VirtualHost *:80>
+    ServerName {{ zabbix_server_name }}
+    Redirect permanent / https://{{ zabbix_server_name }}/
+</VirtualHost>

@@ -1,0 +1,40 @@
+# Hardening Headers
+# Impede que a aplicação seja carregada dentro de um iframe de outro domínio (protege contra clickjacking)
+Header always set X-Frame-Options "SAMEORIGIN"
+
+# Ativa proteção básica contra ataques de cross-site scripting (XSS) nos navegadores
+Header always set X-XSS-Protection "1; mode=block"
+
+# Impede que o navegador faça sniffing de MIME types e confie apenas no Content-Type declarado pelo servidor
+Header always set X-Content-Type-Options "nosniff"
+
+# Define a política de envio do header "Referer" para proteger informações sensíveis
+Header always set Referrer-Policy "strict-origin"
+
+# Define regras de Content Security Policy (CSP) para controlar o que o navegador pode carregar e executar
+# Controla as fontes permitidas para recursos da aplicação:
+# - default-src 'self': permite recursos apenas do mesmo domínio
+# - script-src 'self' 'unsafe-inline' 'unsafe-eval': permite scripts locais e inline
+# - style-src 'self' 'unsafe-inline': permite CSS local e inline
+# - img-src 'self' data:: imagens só do próprio servidor ou inline via data:
+# - font-src 'self' data:: fontes locais ou inline
+# - frame-src 'self': iframes só do próprio domínio
+# - connect-src 'self' ws: wss:: conexões WebSocket e Fetch apenas locais
+# - media-src 'self' data:: mídias do servidor ou inline
+# - object-src 'none': bloqueia uso de <object>, <embed>, <applet>
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.openstreetmap.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.openstreetmap.org; font-src 'self' data:; connect-src 'self' ws: wss:; frame-src 'self'; object-src 'none'; base-uri 'self';"
+
+# Obriga conexões HTTPS por 2 anos e inclui subdomínios
+Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+
+# Define permissões restritas de uso de APIs modernas do navegador (bloqueia geolocalização e microfone)
+Header always set Permissions-Policy "geolocation=(), microphone=()"
+
+# Adiciona atributos Secure, HttpOnly e SameSite=Strict para cookies, reforçando segurança de sessão
+Header always edit Set-Cookie ^(.*)$ "__Host-$1; Secure; HttpOnly; SameSite=Strict; Path=/"
+
+# Permissions-Policy mais restritiva (bloqueia recursos desnecessários)
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), fullscreen=(), sync-xhr=()"
+
+# Proteção contra DNS Prefetching
+Header always set X-DNS-Prefetch-Control "off"

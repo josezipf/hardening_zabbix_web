@@ -1,0 +1,44 @@
+# Endurecimento de Segurança do Apache
+
+# Define o nível de informação no header Server. 'Prod' remove detalhes de versão e SO.
+ServerTokens Prod
+
+# Remove assinatura do Apache em páginas de erro geradas automaticamente
+ServerSignature Off
+
+# Desativa o método HTTP TRACE, prevenindo ataques de Cross Site Tracing (XST)
+TraceEnable Off
+
+# Bloqueia acesso a diretórios de controle de versão no DocumentRoot
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.svn
+RedirectMatch 404 /\.hg
+
+# Desabilita Listagem de diretórios
+<Directory />
+    Options -Indexes
+</Directory>
+
+# Timeout reduzido para mitigar Slowloris
+Timeout 30
+
+# Limite de requisições simultâneas
+MaxClients 150
+LimitRequestBody 1048576
+
+# Desabilita métodos HTTP potencialmente perigosos
+<Location "/">
+    <LimitExcept GET POST HEAD OPTIONS>
+        Require all denied
+    </LimitExcept>
+</Location>
+
+# Bloqueia acesso a arquivos sensíveis do Zabbix
+<FilesMatch "^(top_passwords\.txt|local\.app\.php|conf\.json|\.htaccess)">
+    Require all denied
+</FilesMatch>
+
+# Proteção contra clickjacking específica para paths do Zabbix
+<LocationMatch "^/(zabbix|api)">
+    Header always set X-Frame-Options "DENY"
+</LocationMatch>

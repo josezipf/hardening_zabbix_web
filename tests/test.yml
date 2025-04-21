@@ -1,0 +1,6 @@
+---
+- name: Test ajustes de segurança
+- hosts: localhost
+  remote_user: root
+  roles:
+    - hardening_zabbix_web

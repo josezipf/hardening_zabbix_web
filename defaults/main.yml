@@ -1,0 +1,5 @@
+---
+apache_conf_path: "/etc/apache2/conf-available"
+apache_conf_enabled_path: "/etc/apache2/conf-enabled"
+zabbix_server_name: "zabbix.noto.local"
+# defaults file for hardening_zabbix_web
