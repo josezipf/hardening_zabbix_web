@@ -56,8 +56,6 @@ Role para endurecimento de segurança do Apache em ambientes Zabbix, aplicando c
   roles:
     - role: hardening_zabbix_web
 
----
-
 ## 📂 Estrutura da Role
 
 ```
