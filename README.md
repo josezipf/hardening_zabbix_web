@@ -56,6 +56,8 @@ Role para endurecimento de segurança do Apache em ambientes Zabbix, aplicando c
   roles:
     - role: hardening_zabbix_web
 
+---
+
 ## 📂 Estrutura da Role
 
 hardening_zabbix_web/
@@ -66,6 +68,8 @@ hardening_zabbix_web/
 │   ├── security-headers.conf.j2
 │   └── redirect-http-to-https.conf.j2
 └── handlers/
+
+---
 
 ## 📄 Licença
 MIT — veja o arquivo LICENSE no repositório.
