@@ -60,6 +60,7 @@ Role para endurecimento de segurança do Apache em ambientes Zabbix, aplicando c
 
 ## 📂 Estrutura da Role
 
+```
 hardening_zabbix_web/
 ├── defaults/
 ├── tasks/
@@ -70,7 +71,7 @@ hardening_zabbix_web/
 └── handlers/
 
 ---
-
+```
 ## 📄 Licença
 MIT — veja o arquivo LICENSE no repositório.
 
