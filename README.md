@@ -69,10 +69,8 @@ hardening_zabbix_web/
 │   ├── security-headers.conf.j2
 │   └── redirect-http-to-https.conf.j2
 └── handlers/
-
----
 ```
+
 ## 📄 Licença
 MIT — veja o arquivo LICENSE no repositório.
-
 
