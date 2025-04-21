@@ -1,6 +1,5 @@
 # 📌 Ansible Role: Hardening Zabbix Web (Apache Security Hardening)
 
-![GitHub license](https://img.shields.io/github/license/josezipf/hardening_zabbix_web)  
 ![Ansible](https://img.shields.io/badge/ansible-%231A1918.svg?style=flat&logo=ansible&logoColor=white)  
 ![Apache](https://img.shields.io/badge/apache-%23D42029.svg?style=flat&logo=apache&logoColor=white)
 
@@ -55,6 +54,7 @@ Role para endurecimento de segurança do Apache em ambientes Zabbix, aplicando c
   
   roles:
     - role: hardening_zabbix_web
+```
 
 ## 📂 Estrutura da Role
 
